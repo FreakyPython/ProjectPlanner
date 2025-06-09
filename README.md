@@ -1,108 +1,127 @@
-# 🛠 Project Planner (Tkinter Gantt Chart)
-
-A beginner-friendly Python desktop application that displays project tasks using a visual Gantt chart. Load tasks from a CSV or JSON file and automatically schedule them based on prerequisites.
+The provided code is a Python application that creates a Gantt chart for project planning using Tkinter. It allows users to load tasks from CSV or JSON files, schedule them based on prerequisites, display a Gantt chart, and save or export the results. Below, I’ll simplify the documentation to make it easier to understand, similar to the approach taken with the Budget Manager documentation. This will include an overview, features, usage instructions, and key details about the code structure, while keeping it concise and clear.
 
 ---
 
-## ✅ Features
+# Project Planner
 
-- 📂 Load tasks from **CSV** or **JSON** files
-- 📊 Draws a **dynamic Gantt chart**
-- 🧠 Automatically calculates task order and start times
-- 🖱 Hover to view tooltips with task info
-- 🌙 Optional **Dark Mode** toggle
-- 🖼 Export chart as **PostScript (.ps)** image
-- 💾 Save or load full projects using **JSON**
+A Python application for creating Gantt charts to visualize task schedules using a Tkinter-based GUI. The app reads tasks from CSV or JSON files, schedules them based on prerequisites, and displays a Gantt chart on a Tkinter canvas. Tasks can be saved as JSON or exported as PostScript images.
 
----
+## Features
+- **Load Tasks**: Import tasks from CSV or JSON files, including task ID, title, duration, and prerequisites.
+- **Schedule Tasks**: Automatically schedules tasks based on their prerequisites, detecting circular dependencies.
+- **Gantt Chart**: Displays tasks as bars on a canvas, with weeks marked and tooltips showing task details on hover.
+- **Dark Mode**: Toggle between light and dark themes for the chart.
+- **Export Options**: Save tasks as JSON or export the Gantt chart as a PostScript (.ps) file.
+- **User-Friendly GUI**: Buttons for loading/saving files and a checkbox for dark mode, with an interactive canvas.
 
-## 🏗 How It Works
+## Prerequisites
+- Python 3.x
+- Tkinter (included with Python)
+- Standard libraries: `csv`, `json`, `collections`
 
-- The app reads your CSV/JSON file and builds a list of tasks.
-- Each task has a `title`, `duration`, and optional prerequisites.
-- It uses a simple scheduling algorithm:
-  - Tasks can’t begin until all their prerequisites are completed.
-- The chart is drawn using `tkinter.Canvas`, with time represented in **days**.
-- Every task is displayed as a **horizontal bar** on the timeline.
+## Installation
+1. Ensure Python 3.x is installed.
+2. Save the code in a file named `project_planner.py`.
+3. No additional packages are required (uses Python standard libraries).
 
----
+## Usage
 
-## 📁 File Structure
-project_planner/
-├── project_planner.py # Main application script
-├── example_project.csv # Sample CSV input
-├── example_project.json # Sample JSON input/output
-└── README.md # This file
+### Running the GUI
+Run the script to launch the GUI:
+```bash
+python project_planner.py
+```
 
----
+**Using the GUI**:
+- **Open CSV**: Load tasks from a CSV file (format: `task_id,title,duration,prerequisites`).
+- **Load JSON**: Load tasks from a JSON file.
+- **Save JSON**: Save current tasks to a JSON file.
+- **Export Image**: Save the Gantt chart as a PostScript (.ps) file.
+- **Dark Mode**: Toggle the checkbox to switch between light and dark themes.
+- **Gantt Chart**: Tasks are displayed as bars with:
+  - Task ID and title on the left.
+  - Bars showing duration and start time, with tooltips on hover.
+  - Light blue headers (in light mode) or dark background (in dark mode).
 
-## 📥 CSV Format
-
-Each line in the CSV should follow this format:
-
+### Example CSV File Format
 ```csv
-ID,Title,Duration,Prerequisites
-1,Plan Project,3,
-2,Design,2,1
-3,Develop,5,1 2
-4,Test,2,3
-5,Deploy,1,4
-ID: Unique task number
+1,Design,3,
+2,Development,5,1
+3,Testing,2,2
+```
+- Columns: Task ID (integer), Title (string), Duration (float, in days), Prerequisites (space-separated task IDs, optional).
+- Example: Task 2 (Development) depends on Task 1 (Design) being completed.
 
-Title: Short description
-
-Duration: How long the task takes (in days)
-
-Prerequisites: Space-separated list of task IDs this task depends on (optional)
-
+### Example JSON File Format
+```json
 {
   "tasks": [
-    { "id": 1, "title": "Plan Project", "duration": 3, "prerequisites": [] },
-    { "id": 2, "title": "Design", "duration": 2, "prerequisites": [1] },
-    { "id": 3, "title": "Develop", "duration": 5, "prerequisites": [1, 2] },
-    { "id": 4, "title": "Test", "duration": 2, "prerequisites": [3] },
-    { "id": 5, "title": "Deploy", "duration": 1, "prerequisites": [4] }
+    {"id": 1, "title": "Design", "duration": 3.0, "prerequisites": []},
+    {"id": 2, "title": "Development", "duration": 5.0, "prerequisites": [1]},
+    {"id": 3, "title": "Testing", "duration": 2.0, "prerequisites": [2]}
   ]
 }
-🚀 How to Run
-Install Python 3 (if not already installed).
+```
 
-Open a terminal in the project directory.
+## Code Structure
 
-🚀 How to Run
-Install Python 3 (if not already installed).
+### Key Components
+- **Task Namedtuple**:
+  - Defined as `Task(title, duration, prerequisites)` to store task data.
+  - `prerequisites` is a set of task IDs that must be completed first.
+- **Tasks Dictionary**:
+  - Stores tasks with task ID as the key and `Task` namedtuple as the value.
 
-Open a terminal in the project directory.
+### Functions
+- **File Handling**:
+  - `read_tasks_csv(filepath)`: Reads tasks from a CSV file into a dictionary.
+  - `load_tasks_json(filepath)`: Loads tasks from a JSON file.
+  - `save_tasks_json(filepath)`: Saves tasks to a JSON file.
+- **Task Scheduling**:
+  - `order_tasks(tasks)`: Schedules tasks based on prerequisites, returning start days. Raises an error for circular dependencies.
+- **Gantt Chart**:
+  - `draw_chart(tasks, canvas, dark_mode)`: Draws the Gantt chart on a Tkinter canvas with task bars, week markers, and tooltips.
+- **Tooltip Functions**:
+  - `show_tooltip(event, text)`: Shows task details when hovering over a task bar.
+  - `hide_tooltip()`: Hides the tooltip when the mouse leaves.
+- **File Dialogs**:
+  - `open_csv()`, `load_json()`, `save_json()`, `export_image()`: Handle file operations via Tkinter file dialogs.
 
-Run the app:
-python planner.py
+### GUI Setup
+- **Main Window**: Tkinter window (`root`) with title "Project Planner" and size 1000x600.
+- **Top Frame**: Contains buttons (`Open CSV`, `Load JSON`, `Save JSON`, `Export Image`) and a `Dark Mode` checkbox.
+- **Canvas**: Displays the Gantt chart with task IDs, titles, and bars representing task durations.
 
-🎮 How to Use the App
-Click "Open Project..." to select a .csv file.
+## Example Output
+For the example CSV above:
+- **GUI Gantt Chart**:
+  - Task 1 (Design): Starts at day 0, lasts 3 days.
+  - Task 2 (Development): Starts at day 3, lasts 5 days.
+  - Task 3 (Testing): Starts at day 8, lasts 2 days.
+  - Chart shows task bars aligned by start days, with week markers (Week 1, Week 2, etc.).
+  - Hovering over a bar shows a tooltip (e.g., "Design (3 days)").
+- **Console**: No direct console output; all visualization is in the GUI.
 
-The Gantt chart is drawn automatically.
+## Limitations
+- No programmatic interface for adding/modifying tasks (GUI-only input via files).
+- CSV files require valid data (integer ID, float duration, optional prerequisites).
+- No support for editing tasks directly in the GUI.
+- PostScript export is limited to `.ps` format, which may require conversion for common use.
+- Circular dependencies cause an error and prevent chart rendering.
 
-Hover over a bar to view task info.
+## Contributing
+Submit pull requests or open issues for bugs, improvements, or feature requests.
 
-Click "Clear" to reset the canvas.
+## License
+MIT License
 
-If available:
+---
 
-Use "Load JSON" or "Save JSON" to load/save full projects.
+### Notes
+- The code assumes a 5-day workweek for week markers in the Gantt chart.
+- Task bars are colored red (`#f75d59`) with black outlines.
+- The GUI is fixed at 1000x600 pixels but could be made resizable.
+- To enhance readability, I avoided technical jargon where possible and focused on practical usage instructions.
+- If you want a specific section expanded (e.g., adding programmatic task creation or modifying the GUI), let me know!
 
-Click "Export Image" to save the chart as .ps.
-
-👶 Who This Is For
-This project is perfect if you're learning:
-Python file handling (CSV/JSON)
-Tkinter GUI development
-Scheduling logic and basic algorithms
-Making tools that are actually useful
-You can use this to:
-Learn
-Customize
-Share
-Impress others with your GUI skills 🧠🎨
-
-🙌 License
-MIT License — feel free to use, share, and modify.
+Would you like me to generate a sample Gantt chart visualization based on example data, or do you have other specific questions or modifications for this code?
