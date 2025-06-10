@@ -124,4 +124,4 @@ MIT License
 - To enhance readability, I avoided technical jargon where possible and focused on practical usage instructions.
 - If you want a specific section expanded (e.g., adding programmatic task creation or modifying the GUI), let me know!
 
-Would you like me to generate a sample Gantt chart visualization based on example data, or do you have other specific questions or modifications for this code?
+
